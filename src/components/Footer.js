@@ -9,7 +9,7 @@ function Footer() {
         <img src={logo} alt="logo" className="footer-logo" />
         <span className="footer-title">Lion To-do Everyday</span>
       </div>
-      <p className="footer-desc">LTE는 멋쟁이사자처럼에서 개발한 투두 관리 기반의 웹 서비스입니다.</p>
+      <p className="footer-desc"><b>LTE는 멋쟁이사자처럼에서 개발한 투두 관리 기반의 웹 서비스입니다.</b></p>
       <div className="footer-info">
         <span>상호명 멋쟁이사자처럼</span>
         <span>대표자 이재현</span>
