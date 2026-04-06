@@ -1,0 +1,278 @@
+.todo-container {
+    display: flex;
+    flex-direction: column;
+    width: 360px;
+    gap: 16px;
+}
+
+.todo-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.todo-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+}
+
+.todo-add {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #333;
+}
+
+.todo-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.todo-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.todo-item.done .todo-text {
+    text-decoration: line-through;
+    color: #aaa;
+}
+
+.checkbox {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    background: transparent;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.checkbox.checked {
+    background: #0A84FF;
+    border-color: #0A84FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.checkbox.checked::after {
+    content: '✓';
+}
+
+.todo-text {
+    flex: 1;
+    font-size: 15px;
+    color: #333;
+    align-self: center;
+}
+
+.todo-category {
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+.modal-container {
+    background: #fff;
+    border-radius: 20px;
+    padding: 32px 28px;
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    box-sizing: border-box;
+}
+
+.modal-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+    text-align: center;
+}
+
+.modal-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modal-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.modal-categories {
+    display: flex;
+    justify-content: space-between;
+}
+
+.modal-categoryitem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.modal-categoryitem input[type="radio"] {
+    accent-color: #0A84FF;
+    width: 16px;
+    height: 16px;
+}
+
+.input-wrapper {
+    background: #f1f1f1;
+    border-radius: 12px;
+    padding: 14px;
+}
+
+.text-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    color: #333;
+    background: transparent;
+}
+
+.routine-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    width: 100%;
+}
+
+.routine-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.routine-button {
+    font-size: 20px;
+    color: #aaa;
+}
+
+.routine-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.routine-close {
+    font-size: 24px;
+    cursor: pointer;
+    color: #555;
+}
+
+.routine-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+}
+
+.date-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.date-input {
+    background: #f1f1f1;
+    border: none;
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    color: #333;
+    font-weight: 800;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.date-initial {
+    font-size: 15px;
+    color: #333;
+    font-weight: 600;
+    margin-left: auto;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.leftbutton {
+    flex: 1;
+    padding: 14px;
+    border-radius: 20px;
+    border: 1.5px solid #FF383C;
+    background: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    color: #FF383C;
+    cursor: pointer;
+}
+
+.leftbutton2 {
+    flex: 1;
+    padding: 14px;
+    border-radius: 20px;
+    border: 1.5px solid #0A84FF;
+    background: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    color: #0A84FF;
+    cursor: pointer;
+}
+
+.rightbutton {
+    flex: 1;
+    padding: 14px;
+    border-radius: 20px;
+    border: none;
+    background: #0A84FF;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+}
+
+.leftbutton.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.rightbutton.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
