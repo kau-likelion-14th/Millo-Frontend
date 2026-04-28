@@ -1,0 +1,154 @@
+.mypage-container {
+    display: flex;
+    flex-direction: column;
+    padding: 120px 60px 60px 60px;
+    gap: 40px;
+    max-width: 1450px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.profile-section {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.profile-top {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    width: 100%;
+}
+
+.profile-img-wrap {
+    position: relative;
+    width: 100px;
+    height: 100px;
+}
+
+.profile-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: #f0f0f0;
+}
+
+.edit-icon-btn {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.profile-nickname {
+    font-size: 22px;
+    font-weight: bold;
+    margin: 0;
+    flex: 1;
+}
+
+.save-btn {
+    padding: 12px 28px;
+    background-color: #5b9bd5;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.profile-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-label {
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.profile-input {
+    width: 400px;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.status-section {
+    display: flex;
+    gap: 16px;
+}
+
+.stat-card {
+    background: #f5f5f5;
+    border-radius: 16px;
+    padding: 24px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+}
+
+.stat-card-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.stat-icon {
+    font-size: 28px;
+}
+
+.stat-title {
+    font-size: 14px;
+    color: #555;
+    margin: 0;
+}
+
+.stat-value {
+    font-size: 22px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.song-input-wrap {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 400px;
+    padding: 0 12px;
+}
+
+.song-input {
+    border: none;
+    outline: none;
+    flex: 1;
+    width: auto;
+    padding: 12px 8px;
+}
+
+.song-icon {
+    font-size: 16px;
+}
+
+.search-icon {
+    font-size: 16px;
+    cursor: pointer;
+}
