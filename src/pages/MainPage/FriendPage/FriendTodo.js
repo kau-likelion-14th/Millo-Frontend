@@ -7,34 +7,7 @@ import "../../../styles/FriendTodo.css";
 // FriendTodo 컴포넌트: 친구의 할 일 목록을 읽기 전용으로 표시하는 컴포넌트
 // 본인의 Todo와 달리 수정/삭제 기능 없이 조회만 가능
 
-// 할 일 더미 데이터 (실제 서비스에서는 FriendDetailPage에서 props로 받아온다)
-const dummyTodos = [
-  { id: 1, text: "프론트 보충자료 읽기", category: "공부", completed: true },
-  { id: 2, text: "FriendTodo 구현하기", category: "공부", completed: false },
-  { id: 3, text: "동아리 회의", category: "동아리", completed: false },
-];
-
-// 카테고리별 색상 정의 객체
-// todo-category div의 style에 적용되어 카테고리마다 다른 배경색으로 표시
-const dummyCategories = {
-  공부: { backgroundColor: "#E5F8F1", color: "#333" },
-  일상: { backgroundColor: "#FFC8BE", color: "#333" },
-  동아리: { backgroundColor: "#B6DAFF", color: "#333" },
-};
-
-// - title: 목록 제목 (기본값: "To do List", FriendDetailPage에서 props로 전달)
-const FriendTodo = ({ title = "To do List" }) => {
-  const todos = dummyTodos;
-  const categories = dummyCategories;
-
-  // counts: todos 배열에서 전체 개수(total)와 완료된 개수(done)를 계산
-  // filter로 completed가 true인 항목만 골라 done 값을 구함
-  // useMemo를 써서 todos가 바뀔 때만 다시 계산
-  const counts = useMemo(() => {
-    const total = todos.length;
-    const done = todos.filter((t) => t.completed).length;
-    return { total, done };
-  }, [todos]);
+const FriendTodo = ({ title = "To do List" , todos = [], categories = {} }) => {
 
   return (
     <div className="friend-todo">
@@ -74,5 +47,4 @@ const FriendTodo = ({ title = "To do List" }) => {
     </div>
   );
 };
-
 export default FriendTodo;
