@@ -17,6 +17,28 @@ const config = {
         SEARCH: "/api/follow/search",
         CREATE: "/api/follow",
     },
+
+    PROFILE:{
+        GET: "/api/profile",
+        PUT: "/api/profile",
+        DELETE: "/api/profile",
+        INTRO:"/api/profile/intro",
+    },
+
+    // ▼ 이번 과제에서 추가
+    CALENDAR: {
+        GET: "/api/todos/calendar",
+    },
+
+    TODOS: {
+        LIST: "/api/todos",
+        TOGGLE_COMPLETE: (todoId, date) =>
+            `/api/todos/${todoId}/dates/${date}/complete`,
+    },
+
+    CATEGORIES: {
+        GET: "/api/categories",
+    },
 };
 
 export default config;

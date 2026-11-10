@@ -13,7 +13,8 @@ const toDateKey = (date) => {
 export default function CustomCalendar({
     initialDate = new Date(),
     onDateChange,
-    todosByDate = {},
+    remainingByDate = {},
+    onMonthChange,
 }) {
     const [selectedDate, setSelectedDate] = useState(initialDate);
 
@@ -23,12 +24,17 @@ export default function CustomCalendar({
         onDateChange?.(next);
     };
 
-    const getDayMeta = (date) => {
-        const key = toDateKey(date);
-        const list = todosByDate[key] ?? [];
-        if (list.length === 0) return { hasTodos: false, remaining: 0, allDone: false };
+    const handleActiveStartDateChange = ({ activeStartDate }) => {
+        if (activeStartDate) {
+            onMonthChange?.(activeStartDate);
+        }
+    };
 
-        const remaining = list.filter((t) => !t.completed).length;
+    const getDayMeta = (date) => {
+        const remaining = remainingByDate[toDateKey(date)];
+        if (remaining === undefined || remaining === null) {
+            return { hasTodos: false, remaining: 0, allDone: false };
+        }
         return { hasTodos: true, remaining, allDone: remaining === 0 };
     };
 
@@ -37,6 +43,7 @@ export default function CustomCalendar({
             <Calendar
                 onChange={handledDateChange}
                 value={selectedDate}
+                onActiveStartDateChange={handleActiveStartDateChange}
                 calendarType='gregory'
                 view='month'
                 prev2Label={null}
