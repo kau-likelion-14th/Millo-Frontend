@@ -1,17 +1,58 @@
 import React, { useRef, useState, useEffect } from "react";
+import {get, put, uploadProfile} from "../../../Api";
+import config from "../../../Config";
 
 const profileImg = "https://via.placeholder.com/120";
 
 const Profile = () => {
   const fileInputRef = useRef(null);
 
-  const [nickname] = useState("Likelion#1253");
+  const [nickname, setNickname] = useState("Likelion#1253");
   const [intro, setIntro] = useState("안녕하세요");
   const [favoriteSong, setFavoriteSong] = useState("내꺼하자 - 인피니트");
 
   const [selectedImageFile, setSelectedImageFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState("");
-  const [profileImageUrl] = useState("");
+  const [previewUrl, setPreviewUrl] = useState("null");
+  const [profileImageUrl, setProfileImageUrl] = useState("null");
+
+
+  useEffect (() => {
+    fetchProfileDate();
+  }, []);
+
+  const fetchProfileDate = async () => {
+    try {
+      const response = await get(config.PROFILE.GET);
+
+      const result = response?.result;
+
+      console.log("프로필 데이터:", result);
+      if(!result) return;
+
+      setNickname(result.username ?? "");
+      setIntro(result.introduction ??"");
+      setProfileImageUrl(result.profileImageUrl ?? null);
+
+      const songResponse = await get(config.YOUTUBE.ME);
+
+      if(
+        songResponse?.isSuccess === false ||
+        !Array.isArray(songResponse?.result)
+      ){
+      throw new Error("저장된 노래 조회 실패");
+      }
+
+      const songs = [...songResponse.result].sort(
+      (a,b) => Date.parse(b.savedAt) - DataTransfer.parse(a.savedAt)
+      );
+
+      const latest= songs[0];
+      setFavoriteSong(latest? `${latest.title} - ${latest.artist}`:"");
+    
+    } catch(error){
+      console.error("프로필 조회 실패:", error);
+    }
+  };
 
   const handleClickEditIcon = () => {
     fileInputRef.current?.click();
