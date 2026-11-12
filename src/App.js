@@ -4,6 +4,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import MainPage from './pages/MainPage/Mainpage';
 import LoginPage from './pages/MainPage/LoginPage/Loginpage';
+import ProtectedRoute from './routes/ProtectRoute';
 import FriendPage from './pages/MainPage/FriendPage/FriendPage';
 import FriendDetailPage from './pages/MainPage/FriendPage/FriendDetailPage';
 import MyPage from './pages/MainPage/MyPage/MyPage';
@@ -18,7 +19,9 @@ function App() {
 
   // isLoginPage: 현재 경로가 /login인지 확인하는 변수
   // true이면 Header와 Footer를 렌더링하지 않아 로그인 페이지에서는 네비게이션이 숨겨진다.
-  const isLoginPage = location.pathname === '/login';
+  const isLoginPage = 
+  location.pathname === '/login'||
+  location.pathname === '/login/oauth2/code/kakao';
 
   return (
     <div>
@@ -28,22 +31,26 @@ function App() {
       {/* Routes: 현재 URL 경로와 일치하는 Route 하나를 찾아 해당 element를 렌더링한다.
           경로가 바뀔 때마다 아래 Route 중 매칭되는 컴포넌트로 화면이 교체된다. */}
       <Routes>
-        {/* / 경로: 메인 페이지 */}
-        <Route path="/" element={<MainPage />} />
-
         {/* /login 경로: 로그인 페이지 */}
         <Route path="/login" element={<LoginPage />} />
 
-        {/* /friends 경로: 친구 목록 페이지
+        <Route path="/login/oauth2/code/kakao" element={<LoginPage />} />
+
+        <Route element={<ProtectedRoute />}>
+          {/* / 경로: 메인 페이지 */}
+          <Route path="/" element={<MainPage />} />
+
+          {/* /mypage 경로: 마이 페이지 */}
+          <Route path="/mypage" element={<MyPage />} />
+
+          {/* /friends 경로: 친구 목록 페이지
             FriendList에서 친구 항목 클릭 시 아래 /friends/:id로 이동한다. */}
-        <Route path="/friends" element={<FriendPage />} />
+          <Route path="/friends" element={<FriendPage />} />
 
-        {/* /friends/:id 경로: 친구 상세 페이지
+          {/* /friends/:id 경로: 친구 상세 페이지
             :id는 동적 파라미터로, FriendList에서 navigate로 전달한 friend.id 값이 들어온다. */}
-        <Route path="/friends/:id" element={<FriendDetailPage />} />
-
-        {/* /mypage 경로: 마이 페이지 */}
-        <Route path="/mypage" element={<MyPage />} />
+          <Route path="/friends/:id" element={<FriendDetailPage />} />
+        </Route>
       </Routes>
 
       {/* isLoginPage가 false일 때만 Footer 렌더링 */}
