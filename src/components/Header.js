@@ -52,7 +52,7 @@ function Header() {
             {/*로고*/}
             <div className="header-left">
                 <img src={logo} alt="LTE 로고" className="header-logo"/>
-                <span className="header-title">Lion To-do Everday</span>
+                <span className="header-title">Lion To-do Everyday</span>
             </div>
 
             {/*메뉴*/}

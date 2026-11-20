@@ -32,12 +32,24 @@ const config = {
 
     TODOS: {
         LIST: "/api/todos",
+        DETAIL: (todoId) => `/api/todos/${todoId}`,
+        DELETE: (todoId, date) => `/api/todos/${todoId}/dates/${date}`,
         TOGGLE_COMPLETE: (todoId, date) =>
             `/api/todos/${todoId}/dates/${date}/complete`,
     },
 
     CATEGORIES: {
         GET: "/api/categories",
+    },
+
+    STATISTICS: {
+        GET: "/api/statistic",
+    },
+
+    YOUTUBE :{
+        SEARCH: "/api/youtube/search",
+        SAVE:"/api/youtube/save",
+        ME: "/api/youtube/me",
     },
 };
 

@@ -24,14 +24,19 @@ const RoutineModal = ({
     if (!isOpen) return null;
 
     const toggleDay = (idx) => {
-        setRepeatDays((prev) =>
-            prev.includes(idx)
-                ? prev.filter((d) => d !== idx)
-                : [...prev, idx]
-        );
+        // 백엔드는 반복 요일을 하나만 저장하므로 한 요일만 선택되게 한다
+        setRepeatDays((prev) => (prev.includes(idx) ? [] : [idx]));
     };
 
     const handleSave = () => {
+        if (!startDate || !endDate || repeatDays.length === 0) {
+            alert("시작 날짜, 종료 날짜, 반복 요일을 모두 선택해주세요.");
+            return;
+        }
+        if (startDate > endDate) {
+            alert("종료 날짜는 시작 날짜보다 같거나 늦어야 해요.");
+            return;
+        }
         onSave({
             startDate,
             endDate,
