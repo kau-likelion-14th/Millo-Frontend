@@ -4,8 +4,6 @@ import TodoModal from "./TodoModal";
 import { get } from "../../Api";
 import config from "../../Config";
 
-const uid = () => Date.now() + Math.random();
-
 const DefaultCategories = {
     공부: { backgroundColor: '#E5F8F1', color: '#333' },
     운동: { backgroundColor: '#FFC8BE', color: '#333' },
@@ -21,9 +19,17 @@ const toDateKey = (date) => {
     return `${y}-${m}-${d}`;
 };
 
-const Todo = ({ selectedDate, todosByDate, setTodosByDate, onToggleComplete }) => {
+const Todo = ({
+    selectedDate,
+    todosByDate,
+    onToggleComplete,
+    onCreateTodo,
+    onUpdateTodo,
+    onDeleteTodo,
+    onGetTodoDetail,
+}) => {
     const dateKey = toDateKey(selectedDate);
-    const todos = todosByDate[dateKey] ?? [];
+    const todos = useMemo(() => todosByDate[dateKey] ?? [], [todosByDate, dateKey]);
 
     const [serverCategories, setServerCategories] = useState([]);
 
@@ -31,7 +37,6 @@ const Todo = ({ selectedDate, todosByDate, setTodosByDate, onToggleComplete }) =
         const fetchCategories = async () => {
             try {
                 const res = await get(config.CATEGORIES.GET);
-                console.log("카테고리 응답:", res);
                 setServerCategories(Array.isArray(res?.result) ? res.result : []);
             } catch (error) {
                 console.error("카테고리 조회 실패:", error);
@@ -55,54 +60,55 @@ const Todo = ({ selectedDate, todosByDate, setTodosByDate, onToggleComplete }) =
         return Object.keys(map).length > 0 ? map : DefaultCategories;
     }, [serverCategories]);
 
-    const setTodos = (updater) => {
-        setTodosByDate((prev) => {
-            const current = prev[dateKey] ?? [];
-            const nextTodos = typeof updater === "function" ? updater(current) : updater;
-            return { ...prev, [dateKey]: nextTodos };
-        });
-    };
-
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingTodo, setEditingTodo] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
+    // [+] 버튼: 새로 만들기
     const openModal = () => {
         setEditingTodo(null);
         setIsModalOpen(true);
     };
 
-    const openEditModal = (todo) => {
-        setEditingTodo(todo);
+    // 기존 할 일 클릭: 상세 조회로 루틴 정보까지 불러온 뒤 수정 모달 열기
+    const openEditModal = async (todo) => {
+        const detail = await onGetTodoDetail?.(todo.id);
+        setEditingTodo({
+            ...todo,
+            routineEnabled: detail?.routineEnabled ?? false,
+            routine: detail?.routine ?? null,
+        });
         setIsModalOpen(true);
     };
 
-    const handledSaveTodo = ({ text, category }) => {
-        if (editingTodo) {
-            setTodos((prev) =>
-                prev.map((t) =>
-                    t.id === editingTodo.id ? { ...t, text, category } : t
-                )
-            );
-        } else {
-            setTodos((prev) => [
-                ...prev,
-                { id: uid(), text, category, completed: false },
-            ]);
-        }
+    const closeModal = () => {
         setIsModalOpen(false);
+        setEditingTodo(null);
     };
 
-    const handledDeleteTodo = () => {
-        if (!editingTodo) return;
-        setTodos((prev) => prev.filter((t) => t.id !== editingTodo.id));
-        setIsModalOpen(false);
+    // 저장 버튼: 수정 또는 추가
+    const handleSaveTodo = async (data) => {
+        if (isSubmitting) return;
+        setIsSubmitting(true);
+
+        const ok = editingTodo
+            ? await onUpdateTodo?.(editingTodo.id, data)
+            : await onCreateTodo?.(data);
+
+        setIsSubmitting(false);
+        if (ok) closeModal();
     };
 
-    const counts = useMemo(() => {
-        const total = todos.length;
-        const done = todos.filter((t) => t.completed).length;
-        return { total, done };
-    }, [todos]);
+    // 삭제 버튼
+    const handleDeleteTodo = async () => {
+        if (!editingTodo || isSubmitting) return;
+        if (!window.confirm("이 할 일을 삭제할까요?")) return;
+
+        setIsSubmitting(true);
+        const ok = await onDeleteTodo?.(editingTodo.id);
+        setIsSubmitting(false);
+        if (ok) closeModal();
+    };
 
     return (
         <div className="todo-container">
@@ -137,9 +143,9 @@ const Todo = ({ selectedDate, todosByDate, setTodosByDate, onToggleComplete }) =
             </div>
             <TodoModal
                 isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                onSave={handledSaveTodo}
-                onDelete={handledDeleteTodo}
+                onClose={closeModal}
+                onSave={handleSaveTodo}
+                onDelete={handleDeleteTodo}
                 initialTodo={editingTodo}
                 categories={categories}
             />

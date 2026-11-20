@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import {get, put, uploadProfile} from "../../../Api";
+import { get, put, post, uploadProfile } from "../../../Api";
 import config from "../../../Config";
 
 const profileImg = "https://via.placeholder.com/120";
@@ -7,49 +7,51 @@ const profileImg = "https://via.placeholder.com/120";
 const Profile = () => {
   const fileInputRef = useRef(null);
 
-  const [nickname, setNickname] = useState("Likelion#1253");
-  const [intro, setIntro] = useState("안녕하세요");
-  const [favoriteSong, setFavoriteSong] = useState("내꺼하자 - 인피니트");
+  const [nickname, setNickname] = useState("");
+  const [intro, setIntro] = useState("");
 
   const [selectedImageFile, setSelectedImageFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState("null");
-  const [profileImageUrl, setProfileImageUrl] = useState("null");
+  const [previewUrl, setPreviewUrl] = useState("");
+  const [profileImageUrl, setProfileImageUrl] = useState(null);
 
+  // 노래 입력창에 보이는 글자 (검색어 겸 선택된 노래 표시)
+  const [song, setSong] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [showResults, setShowResults] = useState(false);
+  const [selectedSong, setSelectedSong] = useState(null);
 
-  useEffect (() => {
-    fetchProfileDate();
+  useEffect(() => {
+    fetchProfileData();
   }, []);
 
-  const fetchProfileDate = async () => {
+  const fetchProfileData = async () => {
     try {
       const response = await get(config.PROFILE.GET);
-
       const result = response?.result;
 
       console.log("프로필 데이터:", result);
-      if(!result) return;
+      if (!result) return;
 
       setNickname(result.username ?? "");
-      setIntro(result.introduction ??"");
+      setIntro(result.introduction ?? "");
       setProfileImageUrl(result.profileImageUrl ?? null);
 
       const songResponse = await get(config.YOUTUBE.ME);
 
-      if(
+      if (
         songResponse?.isSuccess === false ||
         !Array.isArray(songResponse?.result)
-      ){
-      throw new Error("저장된 노래 조회 실패");
+      ) {
+        throw new Error("저장된 노래 조회 실패");
       }
 
       const songs = [...songResponse.result].sort(
-      (a,b) => Date.parse(b.savedAt) - DataTransfer.parse(a.savedAt)
+        (a, b) => Date.parse(b.savedAt) - Date.parse(a.savedAt)
       );
 
-      const latest= songs[0];
-      setFavoriteSong(latest? `${latest.title} - ${latest.artist}`:"");
-    
-    } catch(error){
+      const latest = songs[0];
+      setSong(latest ? `${latest.title} - ${latest.artist}` : "");
+    } catch (error) {
       console.error("프로필 조회 실패:", error);
     }
   };
@@ -71,16 +73,82 @@ const Profile = () => {
     setPreviewUrl(URL.createObjectURL(file));
   };
 
-  const handleSaveProfile = () => {
-    const profileData = {
-      nickname,
-      intro,
-      favoriteSong,
-      selectedImageFile,
-    };
+  const handleSaveProfile = async () => {
+    try {
+      await put(config.PROFILE.INTRO, { introduce: intro });
 
-    console.log("저장된 프로필:", profileData);
-    alert("프로필이 저장되었습니다.");
+      if (selectedImageFile) {
+        await uploadProfile(
+          config.PROFILE.PUT,
+          { imageFile: selectedImageFile },
+          { imageField: "image", }
+        );
+      }
+
+      await handleSaveSong();
+      await fetchProfileData();
+
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+
+      setPreviewUrl("");
+      setSelectedImageFile(null);
+
+      alert("프로필이 저장됐어요!");
+    } catch (error) {
+      console.error("프로필 저장 중 오류 발생:", error);
+
+      const message =
+        error?.response?.data?.message ?? "프로필 저장 중 오류 발생";
+
+      alert(message);
+    }
+  };
+
+  const handleSearchSong = async () => {
+    if (!song.trim()) {
+      alert("검색할 노래를 입력해주세요");
+      return;
+    }
+
+    try {
+      const response = await get(config.YOUTUBE.SEARCH, { q: song.trim() });
+      console.log("노래 검색 결과:", response);
+
+      const results = response?.result ?? [];
+
+      setSearchResults(results);
+      setShowResults(true);
+    } catch (error) {
+      console.error("노래 검색 실패:", error);
+      alert("노래 검색에 실패했습니다.");
+    }
+  };
+
+  // 검색 결과에서 노래를 클릭했을 때
+  const handleSelectSong = (item) => {
+    setSelectedSong(item);
+    setSong(`${item.title} - ${item.artist}`);
+    setShowResults(false);
+  };
+
+  const handleSaveSong = async () => {
+    if(!selectedSong) return ;
+
+    try{
+      await post(config.YOUTUBE.SAVE,{
+        songId: selectedSong.songId,
+        title: selectedSong.title,
+        artist:selectedSong.artist,
+      });
+      console.log("노래 저장 완료");
+
+      setSelectedSong(null);
+    }catch(error) {
+      console.error("노래 저장 실패:", error);
+      throw error;
+    }
   };
 
   useEffect(() => {
@@ -134,12 +202,41 @@ const Profile = () => {
             <span className="song-icon">🎵</span>
             <input
               className="song-input"
-              value={favoriteSong}
-              onChange={(e) => setFavoriteSong(e.target.value)}
+              value={song}
               placeholder="좋아하는 노래를 입력해주세요"
+              onChange={(e) => {
+                setSong(e.target.value);
+                setSelectedSong(null);
+                setShowResults(false);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSearchSong();
+                }
+              }}
             />
-            <span className="search-icon">⌕</span>
+            <span className="search-icon" onClick={handleSearchSong}>
+              ⌕
+            </span>
           </div>
+
+          {showResults && (
+            <div className="song-search-results">
+              {searchResults.length === 0 ? (
+                <p>검색 결과가 없습니다.</p>
+              ) : (
+                searchResults.map((item) => (
+                  <div
+                    key={item.songId}
+                    className="song-search-item"
+                    onClick={() => handleSelectSong(item)}
+                  >
+                    {item.title} - {item.artist}
+                  </div>
+                ))
+              )}
+            </div>
+          )}
         </div>
       </div>
 
