@@ -95,14 +95,29 @@
     background: #0A84FF;
 }
 
+/* 할 일이 있는 날은 숫자가 들어간 칸이 회색 칸 역할을 한다 (숫자 정가운데 정렬) */
+.calendar-container .tile-has::after,
+.calendar-container .tile-done::after {
+    display: none;
+}
+
 .tile-meta {
-    position: absolute;
-    left: 50%;
-    bottom: 14px;
-    transform: translateX(-50%);
+    width: 34px;
+    height: 34px;
+    margin: 10px auto 0;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f1f1f1;
+    border-radius: 8px;
     font-size: 11px;
+    line-height: 1;
     color: #555;
-    z-index: 1;
+}
+
+.calendar-container .react-calendar__tile--now .tile-meta {
+    border: 2px solid #0A84FF;
 }
 
 .tile-done .tile-meta {

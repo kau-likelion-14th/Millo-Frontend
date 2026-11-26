@@ -37,14 +37,7 @@ function FriendSearch({
   const nickname = query.trim();
 
   useEffect(() => {
-    if (!nickname) {
-      setResults([]);
-      setTotalPages(0);
-      setError("");
-      setLoading(false);
-      return;
-    }
-
+    // 검색어가 비어 있으면 팔로우 가능한 전체 목록을 보여줍니다.
     let active = true;
     const controller = new AbortController();
 
@@ -123,9 +116,7 @@ function FriendSearch({
 
       {followError && <p role="alert">{followError}</p>}
 
-      {!nickname ? (
-        <p>검색할 닉네임을 입력해 주세요.</p>
-      ) : loading ? (
+      {loading ? (
         <p role="status">검색 중...</p>
       ) : error ? (
         <div>
@@ -138,7 +129,7 @@ function FriendSearch({
           </button>
         </div>
       ) : results.length === 0 ? (
-        <p>검색 결과가 없습니다.</p>
+        <p>{nickname ? "검색 결과가 없습니다." : "팔로우할 수 있는 사용자가 없습니다."}</p>
       ) : (
         <ul className="friend-search__list">
           {results.map((user) => {
@@ -177,7 +168,7 @@ function FriendSearch({
         </ul>
       )}
 
-      {nickname && !loading && !error && totalPages > 1 && (
+      {!loading && !error && totalPages > 1 && (
         <div>
           <button
             type="button"
